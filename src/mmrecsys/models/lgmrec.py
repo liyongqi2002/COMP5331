@@ -10,6 +10,7 @@ from .base import DotProductScorer, LossOutput, Recommender
 from ..data.views import TrainBatch, TrainData
 from ..experiment.artifacts import GraphCache
 from ..nn.damps import DAMPS
+from ..nn.damps_released import DAMPS as ReleasedDAMPS
 from ..nn.graph import interaction_graph
 from ..nn.losses import bpr_loss
 
@@ -29,12 +30,18 @@ class LGMRecConfig:
     temperature: float = 0.2
     contrastive_chunk: int = 8192
     damps_enabled: bool = False
+    damps_mode: str = "concat"
     damps_apc: bool = True
     damps_avrf: bool = True
     damps_imcf: bool = True
     damps_eps: float = 1e-6
 
     def __post_init__(self):
+        if self.damps_mode not in ("concat", "official"):
+            raise ValueError("model.damps_mode must be concat or official")
+        if self.damps_enabled and self.damps_mode == "official":
+            if not (self.damps_apc and self.damps_avrf and self.damps_imcf) or self.damps_eps != 1e-6:
+                raise ValueError("Official DAMPS requires all components on and eps=1e-6")
         if self.name != "lgmrec":
             raise ValueError("Expected model.name=lgmrec")
         for field in ("embedding_dim", "ui_layers", "modal_layers", "hyper_layers",
@@ -65,6 +72,9 @@ class LGMRecConfig:
 
 class LGMRec(Recommender):
     def __init__(self, config: LGMRecConfig, data: TrainData, cache: GraphCache):
+        if config.damps_enabled and config.damps_mode == "official":
+            self._init_official(config, data, cache)
+            return
         super().__init__()
         self.config = config
         self.n_users, self.n_items = data.n_users, data.n_items
@@ -136,6 +146,8 @@ class LGMRec(Recommender):
         return user_state, item_state
 
     def encode(self):
+        if self.config.damps_enabled and self.config.damps_mode == "official":
+            return self._encode_official()
         collaborative = self._collaborative()
         image_items = self.image @ self.image_projection
         text_items = self.text @ self.text_projection
@@ -190,3 +202,56 @@ class LGMRec(Recommender):
             raise RuntimeError("make_scorer requires model.eval()")
         users, items, _ = self.encode()
         return DotProductScorer(users, items)
+
+
+    # Published adapter path; isolated from the default concatenation design.
+    def _init_official(self, config: LGMRecConfig, data: TrainData, cache: GraphCache):
+        Recommender.__init__(self)
+        self.config = config
+        self.n_users, self.n_items = data.n_users, data.n_items
+        self.register_buffer("ui_graph", cache.get_or_build(
+            {"kind": "lgmrec_ui", "train": data.fingerprint},
+            lambda: interaction_graph(data.edges, data.n_users, data.n_items)), persistent=False)
+        edges = torch.as_tensor(data.edges.copy(), dtype=torch.long)
+        incidence = torch.sparse_coo_tensor(edges.T, torch.ones(len(edges)),
+                                             (data.n_users, data.n_items), check_invariants=True).coalesce()
+        self.register_buffer("incidence", incidence, persistent=False)
+        degree = torch.bincount(edges[:, 0], minlength=data.n_users).float()
+        self.register_buffer("inverse_user_degree", (degree + 1e-7).reciprocal(), persistent=False)
+        image, text = data.features["image"], data.features["text"]
+        self.register_buffer("image", image, persistent=False)
+        self.register_buffer("text", text, persistent=False)
+        dim = config.embedding_dim
+        self.user_id = nn.Embedding(data.n_users, dim)
+        self.item_id = nn.Embedding(data.n_items, dim)
+        nn.init.xavier_uniform_(self.user_id.weight)
+        nn.init.xavier_uniform_(self.item_id.weight)
+        self.damps = ReleasedDAMPS(dim, "cpu", image.clone(), text.clone())
+        # The release stores this tensor as a plain attribute. Register it so
+        # COMP5331 .to(device) and checkpoints preserve the same prior values.
+        prior = self.damps.avg_R
+        del self.damps.avg_R
+        self.damps.register_buffer("avg_R", prior)
+        with torch.no_grad():
+            calibrated_image, calibrated_text = self.damps(image, text)
+        self.image_embedding = nn.Embedding.from_pretrained(calibrated_image.clone(), freeze=True)
+        self.text_embedding = nn.Embedding.from_pretrained(calibrated_text.clone(), freeze=True)
+        # Native parameter shapes and initialization order from the release.
+        self.image_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(image.shape[1], dim)))
+        self.image_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(image.shape[1], config.hyperedges)))
+        self.text_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(text.shape[1], dim)))
+        self.text_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(text.shape[1], config.hyperedges)))
+
+    def _encode_official(self):
+        collaborative = self._collaborative()
+        image_items = self.image_embedding.weight @ self.image_projection
+        text_items = self.text_embedding.weight @ self.text_projection
+        image_local = self._local(image_items)
+        text_local = self._local(text_items)
+        image_user, image_item = self._global(self.image_embedding.weight, self.image_attributes,
+                                              collaborative[self.n_users:])
+        text_user, text_item = self._global(self.text_embedding.weight, self.text_attributes,
+                                            collaborative[self.n_users:])
+        global_sum = torch.cat((image_user + text_user, image_item + text_item), dim=0)
+        fused = collaborative + image_local + text_local + self.config.alpha * F.normalize(global_sum, dim=-1)
+        return fused[:self.n_users], fused[self.n_users:], (image_user, image_item, text_user, text_item)

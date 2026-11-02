@@ -13,6 +13,7 @@ from .base import DotProductScorer, LossOutput, Recommender
 from ..data.views import TrainBatch, TrainData
 from ..experiment.artifacts import GraphCache
 from ..nn.damps import DAMPS
+from ..nn.damps_released import DAMPS as ReleasedDAMPS
 from ..nn.graph import interaction_graph, knn_graph
 from ..nn.losses import bpr_loss, info_nce
 
@@ -34,12 +35,18 @@ class PGLConfig:
     ssl_weight: float = 0.0
     temperature: float = 0.2
     damps_enabled: bool = False
+    damps_mode: str = "concat"
     damps_apc: bool = True
     damps_avrf: bool = True
     damps_imcf: bool = True
     damps_eps: float = 1e-6
 
     def __post_init__(self):
+        if self.damps_mode not in ("concat", "official"):
+            raise ValueError("model.damps_mode must be concat or official")
+        if self.damps_enabled and self.damps_mode == "official":
+            if not (self.damps_apc and self.damps_avrf and self.damps_imcf) or self.damps_eps != 1e-6:
+                raise ValueError("Official DAMPS requires all components on and eps=1e-6")
         if self.name != "pgl" or self.mode not in ("local", "global"):
             raise ValueError("PGL requires name=pgl and mode=local/global")
         for field in ("embedding_dim", "ui_layers", "item_layers", "knn_k", "knn_chunk_size"):
@@ -97,6 +104,9 @@ def _official_product_graph(full_graph, rank, fraction, threshold, block_rows=25
 
 class PGL(Recommender):
     def __init__(self, config: PGLConfig, data: TrainData, cache: GraphCache):
+        if config.damps_enabled and config.damps_mode == "official":
+            self._init_official(config, data, cache)
+            return
         super().__init__()
         self.config = config
         self.n_users, self.n_items = data.n_users, data.n_items
@@ -165,6 +175,8 @@ class PGL(Recommender):
                                                self.n_items).to(self.full_graph.device)
 
     def encode(self, graph):
+        if self.config.damps_enabled and self.config.damps_mode == "official":
+            return self._encode_official(graph)
         image = self.image_projection(self.image_embedding.weight)
         text = self.text_projection(self.text_embedding.weight)
         item_channels = [image, text]
@@ -207,3 +219,82 @@ class PGL(Recommender):
         if self.training:
             raise RuntimeError("make_scorer requires model.eval()")
         return DotProductScorer(*self.encode(self.full_graph))
+
+
+    # Published adapter path; isolated from the default concatenation design.
+    def _init_official(self, config: PGLConfig, data: TrainData, cache: GraphCache):
+        Recommender.__init__(self)
+        self.config = config
+        self.n_users, self.n_items = data.n_users, data.n_items
+        self.register_buffer("full_graph", cache.get_or_build(
+            {"kind": "pgl_ui", "train": data.fingerprint},
+            lambda: interaction_graph(data.edges, data.n_users, data.n_items)), persistent=False)
+        self.register_buffer("train_edges", torch.as_tensor(data.edges.copy(), dtype=torch.long), persistent=False)
+        degree_u = torch.bincount(self.train_edges[:, 0], minlength=data.n_users).float()
+        degree_i = torch.bincount(self.train_edges[:, 1], minlength=data.n_items).float()
+        edge_weights = ((degree_u[self.train_edges[:, 0]] + 1e-7).rsqrt() *
+                        (degree_i[self.train_edges[:, 1]] + 1e-7).rsqrt())
+        self.register_buffer("edge_weights", edge_weights, persistent=False)
+        self.user_text = nn.Embedding(data.n_users, config.embedding_dim)
+        self.user_image = nn.Embedding(data.n_users, config.embedding_dim)
+        nn.init.xavier_uniform_(self.user_image.weight)
+        nn.init.xavier_uniform_(self.user_text.weight)
+        image = data.features["image"]
+        text = data.features["text"]
+        self.damps = ReleasedDAMPS(config.embedding_dim, "cpu", image.clone(), text.clone())
+        # The release stores this tensor as a plain attribute. Register it so
+        # COMP5331 .to(device) and checkpoints preserve the same prior values.
+        prior = self.damps.avg_R
+        del self.damps.avg_R
+        self.damps.register_buffer("avg_R", prior)
+        # Official forward uses incoming widths for inverse FFT reconstruction.
+        with torch.no_grad():
+            graph_image, graph_text = self.damps(image, text)
+        self.image_embedding = nn.Embedding.from_pretrained(graph_image.clone(), freeze=False)
+        self.image_projection = nn.Linear(graph_image.shape[1], config.embedding_dim)
+        self.text_embedding = nn.Embedding.from_pretrained(graph_text.clone(), freeze=False)
+        self.text_projection = nn.Linear(graph_text.shape[1], config.embedding_dim)
+        graphs = []
+        for modality, features in (("image", graph_image), ("text", graph_text)):
+            options = dict(kind="pgl_released_adapter_item_knn", feature=data.feature_fingerprints[modality],
+                           k=config.knn_k, self_loops=True, weight="binary", normalize="symmetric",
+                           graph_source="released_initial_raw_width_calibration",
+                           seed=torch.initial_seed(),
+                           embedding_dim=config.embedding_dim,
+                           damps_apc=config.damps_apc, damps_avrf=config.damps_avrf,
+                           damps_imcf=config.damps_imcf, damps_eps=config.damps_eps,
+                           adapter_version=1)
+            graphs.append(cache.get_or_build(options, lambda features=features: knn_graph(
+                features, config.knn_k, chunk_size=config.knn_chunk_size,
+                self_loops=True, symmetrize=False, edge_weight="binary", normalization="symmetric")))
+        self.register_buffer("item_graph", (config.image_weight * graphs[0] +
+                              (1 - config.image_weight) * graphs[1]).coalesce(), persistent=False)
+        if config.mode == "global":
+            self.register_buffer("subgraph", cache.get_or_build(
+                {"kind": "pgl_global_product", "train": data.fingerprint,
+                 "rank": config.embedding_dim, "fraction": config.global_fraction,
+                 "threshold": config.global_threshold},
+                lambda: _official_product_graph(self.full_graph, config.embedding_dim,
+                    config.global_fraction, config.global_threshold)), persistent=False)
+        else:
+            self.register_buffer("subgraph", None, persistent=False)
+        self._epoch = 0
+
+    def _encode_official(self, graph):
+        # Preserve the released adapter's outer projections even though its
+        # DAMPS ignores their values and uses only their output widths.
+        image = self.image_projection(self.image_embedding.weight)
+        text = self.text_projection(self.text_embedding.weight)
+        image, text = self.damps(image, text)
+        initial_items = torch.cat((F.normalize(image, dim=-1), F.normalize(text, dim=-1)), dim=-1)
+        initial_users = torch.cat((self.user_image.weight, self.user_text.weight), dim=-1)
+        item_context = initial_items
+        for _ in range(self.config.item_layers):
+            item_context = torch.sparse.mm(self.item_graph, item_context)
+        hidden = torch.cat((initial_users, initial_items), dim=0)
+        layers = [hidden]
+        for _ in range(self.config.ui_layers):
+            hidden = torch.sparse.mm(graph, hidden)
+            layers.append(hidden)
+        fused = torch.stack(layers).mean(0)
+        return fused[:self.n_users], fused[self.n_users:] + item_context

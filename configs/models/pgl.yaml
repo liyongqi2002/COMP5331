@@ -14,6 +14,7 @@ model:
   ssl_weight: 0.0
   temperature: 0.2
   damps_enabled: false
+  damps_mode: concat
   damps_apc: true
   damps_avrf: true
   damps_imcf: true
