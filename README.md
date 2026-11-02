@@ -161,13 +161,6 @@ clothing、elec、microlens。配置为当前固定参数，不代表逐数据�
 原始分支在启用 DAMPS 后保留。DAMPS 核心实现未修改；拼接增加维度与参数量，
 实验差异不能单独归因于校准。按验证集选择最佳轮次，测试集仅用于最终评估。
 
-已有消融入口的 baseline/full 分别对应关闭/开启四路拼接：
-
-```bash
-python -m mmrecsys.experiment.ablation --config configs/models/pgl.yaml --variants baseline full --seeds 999 2024 2025 2026 2027
-python -m mmrecsys.experiment.ablation --config configs/models/lgmrec.yaml --variants baseline full --seeds 999 2024 2025 2026 2027
-```
-
 历史试验版本和旧代码已归档于本地 runs；旧实验使用独立快照，模型名仍可能记录为
 `pgl_damps_concat` / `lgmrec_damps_concat`。当前不再注册这些名称。
 
