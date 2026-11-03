@@ -13,7 +13,6 @@ from .base import DotProductScorer, LossOutput, Recommender
 from ..data.views import TrainBatch, TrainData
 from ..experiment.artifacts import GraphCache
 from ..nn.damps import DAMPS
-from ..nn.damps_released import DAMPS as ReleasedDAMPS
 from ..nn.graph import interaction_graph, knn_graph
 from ..nn.losses import bpr_loss, info_nce
 
@@ -44,9 +43,6 @@ class PGLConfig:
     def __post_init__(self):
         if self.damps_mode not in ("concat", "official"):
             raise ValueError("model.damps_mode must be concat or official")
-        if self.damps_enabled and self.damps_mode == "official":
-            if not (self.damps_apc and self.damps_avrf and self.damps_imcf) or self.damps_eps != 1e-6:
-                raise ValueError("Official DAMPS requires all components on and eps=1e-6")
         if self.name != "pgl" or self.mode not in ("local", "global"):
             raise ValueError("PGL requires name=pgl and mode=local/global")
         for field in ("embedding_dim", "ui_layers", "item_layers", "knn_k", "knn_chunk_size"):
@@ -221,7 +217,7 @@ class PGL(Recommender):
         return DotProductScorer(*self.encode(self.full_graph))
 
 
-    # Published adapter path; isolated from the default concatenation design.
+    # Official call sites using the shared COMP5331 DAMPS implementation.
     def _init_official(self, config: PGLConfig, data: TrainData, cache: GraphCache):
         Recommender.__init__(self)
         self.config = config
@@ -241,29 +237,26 @@ class PGL(Recommender):
         nn.init.xavier_uniform_(self.user_text.weight)
         image = data.features["image"]
         text = data.features["text"]
-        self.damps = ReleasedDAMPS(config.embedding_dim, "cpu", image.clone(), text.clone())
-        # The release stores this tensor as a plain attribute. Register it so
-        # COMP5331 .to(device) and checkpoints preserve the same prior values.
-        prior = self.damps.avg_R
-        del self.damps.avg_R
-        self.damps.register_buffer("avg_R", prior)
-        # Official forward uses incoming widths for inverse FFT reconstruction.
+        # Reuse COMP5331's feature-owned DAMPS; its output width is D.
+        self.damps = DAMPS(config.embedding_dim, apc=config.damps_apc,
+                           avrf=config.damps_avrf, imcf=config.damps_imcf,
+                           eps=config.damps_eps, raw_image=image.clone(), raw_text=text.clone())
         with torch.no_grad():
-            graph_image, graph_text = self.damps(image, text)
+            graph_image, graph_text = self.damps()
         self.image_embedding = nn.Embedding.from_pretrained(graph_image.clone(), freeze=False)
         self.image_projection = nn.Linear(graph_image.shape[1], config.embedding_dim)
         self.text_embedding = nn.Embedding.from_pretrained(graph_text.clone(), freeze=False)
         self.text_projection = nn.Linear(graph_text.shape[1], config.embedding_dim)
         graphs = []
         for modality, features in (("image", graph_image), ("text", graph_text)):
-            options = dict(kind="pgl_released_adapter_item_knn", feature=data.feature_fingerprints[modality],
+            options = dict(kind="pgl_comp5331_official_style_item_knn", feature=data.feature_fingerprints[modality],
                            k=config.knn_k, self_loops=True, weight="binary", normalize="symmetric",
-                           graph_source="released_initial_raw_width_calibration",
+                           graph_source="comp5331_initial_d_width_calibration",
                            seed=torch.initial_seed(),
                            embedding_dim=config.embedding_dim,
                            damps_apc=config.damps_apc, damps_avrf=config.damps_avrf,
                            damps_imcf=config.damps_imcf, damps_eps=config.damps_eps,
-                           adapter_version=1)
+                           adapter_version=2)
             graphs.append(cache.get_or_build(options, lambda features=features: knn_graph(
                 features, config.knn_k, chunk_size=config.knn_chunk_size,
                 self_loops=True, symmetrize=False, edge_weight="binary", normalization="symmetric")))
@@ -281,8 +274,9 @@ class PGL(Recommender):
         self._epoch = 0
 
     def _encode_official(self, graph):
-        # Preserve the released adapter's outer projections even though its
-        # DAMPS ignores their values and uses only their output widths.
+        # Preserve the source adapter's outer projection call site. The shared
+        # feature-owned DAMPS validates these D-wide inputs then recomputes its
+        # own embeddings/projections, so the outer parameters have no gradient.
         image = self.image_projection(self.image_embedding.weight)
         text = self.text_projection(self.text_embedding.weight)
         image, text = self.damps(image, text)

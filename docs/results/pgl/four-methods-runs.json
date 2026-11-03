@@ -634,19 +634,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 283,
-      "best_epoch": 263,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 306,
+      "best_epoch": 286,
       "result": {
-        "best_epoch": 263,
-        "best_validation_metric": 0.0869926165374867,
+        "best_epoch": 286,
+        "best_validation_metric": 0.08785781630728919,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05642616019448111,
-          "Recall@20": 0.08952950066989665,
-          "NDCG@10": 0.030425737237717965,
-          "NDCG@20": 0.0388824372630892,
+          "Recall@10": 0.0573641773500349,
+          "Recall@20": 0.08932462711711876,
+          "NDCG@10": 0.030823412296888862,
+          "NDCG@20": 0.03899688284781861,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -680,7 +680,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -695,6 +695,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -738,19 +739,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 162,
-      "best_epoch": 142,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 260,
+      "best_epoch": 240,
       "result": {
-        "best_epoch": 142,
-        "best_validation_metric": 0.0843608958111401,
+        "best_epoch": 240,
+        "best_validation_metric": 0.08678776524752355,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05452958672423831,
-          "Recall@20": 0.08397278002703563,
-          "NDCG@10": 0.029062309354528342,
-          "NDCG@20": 0.03660829672003448,
+          "Recall@10": 0.0552063428985517,
+          "Recall@20": 0.08557188219055023,
+          "NDCG@10": 0.029993654836278666,
+          "NDCG@20": 0.037822819073798086,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -784,7 +785,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -799,6 +800,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -842,19 +844,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
       "latest_epoch": 86,
       "best_epoch": 66,
       "result": {
         "best_epoch": 66,
-        "best_validation_metric": 0.0808715057120817,
+        "best_validation_metric": 0.08118006832457848,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05121478033409122,
-          "Recall@20": 0.08067109885057944,
-          "NDCG@10": 0.027044582274060563,
-          "NDCG@20": 0.034587119492041886,
+          "Recall@10": 0.0511316398523907,
+          "Recall@20": 0.08050696068309851,
+          "NDCG@10": 0.026923125361698226,
+          "NDCG@20": 0.03447106677048685,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -888,7 +890,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -903,6 +905,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -1882,19 +1885,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 363,
-      "best_epoch": 343,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 494,
+      "best_epoch": 474,
       "result": {
-        "best_epoch": 343,
-        "best_validation_metric": 0.0933892278833926,
+        "best_epoch": 474,
+        "best_validation_metric": 0.09717767417563125,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.06065888310115513,
-          "Recall@20": 0.09366159548824306,
-          "NDCG@10": 0.032771489924552116,
-          "NDCG@20": 0.04127902377824941,
+          "Recall@10": 0.0632600748035604,
+          "Recall@20": 0.09680056040244817,
+          "NDCG@10": 0.034167754525499305,
+          "NDCG@20": 0.042833954448741725,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -1928,7 +1931,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -1943,6 +1946,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -1986,19 +1990,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 355,
-      "best_epoch": 335,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 339,
+      "best_epoch": 319,
       "result": {
-        "best_epoch": 335,
-        "best_validation_metric": 0.10041893712951852,
+        "best_epoch": 319,
+        "best_validation_metric": 0.10105953573910414,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.06466065732246415,
-          "Recall@20": 0.1002941577777243,
-          "NDCG@10": 0.035069627010334,
-          "NDCG@20": 0.0442289810729753,
+          "Recall@10": 0.06522197385799272,
+          "Recall@20": 0.10158368982741141,
+          "NDCG@10": 0.03508889339778779,
+          "NDCG@20": 0.044436219857041756,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -2032,7 +2036,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -2047,6 +2051,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -2090,19 +2095,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 335,
-      "best_epoch": 315,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 423,
+      "best_epoch": 403,
       "result": {
-        "best_epoch": 315,
-        "best_validation_metric": 0.09658597980266088,
+        "best_epoch": 403,
+        "best_validation_metric": 0.09997456961675216,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.06248193005314191,
-          "Recall@20": 0.09632208024884581,
-          "NDCG@10": 0.03379968011220642,
-          "NDCG@20": 0.04250962327230961,
+          "Recall@10": 0.06652054645481241,
+          "Recall@20": 0.10073670983834479,
+          "NDCG@10": 0.03567037078350365,
+          "NDCG@20": 0.04449919332091027,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -2136,7 +2141,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -2151,6 +2156,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3130,19 +3136,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 390,
-      "best_epoch": 370,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 428,
+      "best_epoch": 408,
       "result": {
-        "best_epoch": 370,
-        "best_validation_metric": 0.0665645244135609,
+        "best_epoch": 408,
+        "best_validation_metric": 0.06898410447804919,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.04306750958438063,
-          "Recall@20": 0.06536656402221183,
-          "NDCG@10": 0.023151061108996205,
-          "NDCG@20": 0.028814212291095282,
+          "Recall@10": 0.044599317879841914,
+          "Recall@20": 0.06892907618781637,
+          "NDCG@10": 0.024349661390190985,
+          "NDCG@20": 0.030519932332914005,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3176,7 +3182,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -3191,6 +3197,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3234,19 +3241,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 344,
-      "best_epoch": 324,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 236,
+      "best_epoch": 216,
       "result": {
-        "best_epoch": 324,
-        "best_validation_metric": 0.06448616717867994,
+        "best_epoch": 216,
+        "best_validation_metric": 0.06125963727456605,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.04255422685996226,
-          "Recall@20": 0.06469121428752779,
-          "NDCG@10": 0.0226440952536453,
-          "NDCG@20": 0.02825506706095147,
+          "Recall@10": 0.03980585810885148,
+          "Recall@20": 0.06183832712509687,
+          "NDCG@10": 0.021094736583439425,
+          "NDCG@20": 0.026681441864626784,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3280,7 +3287,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -3295,6 +3302,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3338,19 +3346,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official",
-      "latest_epoch": 308,
-      "best_epoch": 288,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl",
+      "latest_epoch": 310,
+      "best_epoch": 290,
       "result": {
-        "best_epoch": 288,
-        "best_validation_metric": 0.06453678260365746,
+        "best_epoch": 290,
+        "best_validation_metric": 0.06420053994126658,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.04230626010274118,
-          "Recall@20": 0.06448387007073884,
-          "NDCG@10": 0.022506842209992963,
-          "NDCG@20": 0.028119689703541586,
+          "Recall@10": 0.04213065224566481,
+          "Recall@20": 0.06457061612061993,
+          "NDCG@10": 0.02244252185237976,
+          "NDCG@20": 0.028133254020859602,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3384,7 +3392,7 @@
           }
         },
         "model": {
-          "name": "pgl_damps_official",
+          "name": "pgl",
           "embedding_dim": 64,
           "ui_layers": 2,
           "item_layers": 1,
@@ -3399,6 +3407,7 @@
           "ssl_weight": 0.0,
           "temperature": 0.2,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -4090,24 +4099,24 @@
       "variant": "official",
       "seed": 999,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "elec",
       "variant": "official",
       "seed": 2024,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "elec",
       "variant": "official",
       "seed": 2025,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "elec",
@@ -4762,24 +4771,24 @@
       "variant": "official",
       "seed": 999,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "microlens",
       "variant": "official",
       "seed": 2024,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "microlens",
       "variant": "official",
       "seed": 2025,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "pgl_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "pgl"
     },
     {
       "dataset": "microlens",

@@ -622,19 +622,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 95,
-      "best_epoch": 75,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 83,
+      "best_epoch": 63,
       "result": {
-        "best_epoch": 75,
-        "best_validation_metric": 0.08184604929655072,
+        "best_epoch": 63,
+        "best_validation_metric": 0.07935256951842193,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05512356975329463,
-          "Recall@20": 0.08509922536536063,
-          "NDCG@10": 0.030034199214029618,
-          "NDCG@20": 0.03771587652454196,
+          "Recall@10": 0.053395619123312636,
+          "Recall@20": 0.08333998991494493,
+          "NDCG@10": 0.02917917425695755,
+          "NDCG@20": 0.03690127499633105,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -668,7 +668,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -681,6 +681,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -724,19 +725,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 57,
-      "best_epoch": 37,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 49,
+      "best_epoch": 29,
       "result": {
-        "best_epoch": 37,
-        "best_validation_metric": 0.08120339418873747,
+        "best_epoch": 29,
+        "best_validation_metric": 0.07999840820874507,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.0524412178204927,
-          "Recall@20": 0.08282832920914689,
-          "NDCG@10": 0.02829215759377762,
-          "NDCG@20": 0.03613401185095748,
+          "Recall@10": 0.05175433763116972,
+          "Recall@20": 0.08120072265096692,
+          "NDCG@10": 0.02806695795627698,
+          "NDCG@20": 0.03564090903305531,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -770,7 +771,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -783,6 +784,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -826,19 +828,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 94,
-      "best_epoch": 74,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 82,
+      "best_epoch": 62,
       "result": {
-        "best_epoch": 74,
-        "best_validation_metric": 0.08214114290612105,
+        "best_epoch": 62,
+        "best_validation_metric": 0.0795740733938214,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05434583501695871,
-          "Recall@20": 0.08219075558880137,
-          "NDCG@10": 0.029311550218192754,
-          "NDCG@20": 0.0364701021552375,
+          "Recall@10": 0.052512826164150414,
+          "Recall@20": 0.08127657762653909,
+          "NDCG@10": 0.028508733328807427,
+          "NDCG@20": 0.03589677314233814,
           "n_users": 19445
         },
         "evaluation_protocol": {
@@ -872,7 +874,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -885,6 +887,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -1846,19 +1849,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 88,
-      "best_epoch": 68,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 103,
+      "best_epoch": 83,
       "result": {
-        "best_epoch": 68,
-        "best_validation_metric": 0.08961504925880105,
+        "best_epoch": 83,
+        "best_validation_metric": 0.08952089825870026,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05951639649810896,
-          "Recall@20": 0.09082595152037254,
-          "NDCG@10": 0.03259613713114294,
-          "NDCG@20": 0.040637081747066504,
+          "Recall@10": 0.059679527653149766,
+          "Recall@20": 0.09035383653620632,
+          "NDCG@10": 0.03216068437152223,
+          "NDCG@20": 0.04003455026645309,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -1892,7 +1895,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -1905,6 +1908,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -1948,19 +1952,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 73,
-      "best_epoch": 53,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 105,
+      "best_epoch": 85,
       "result": {
-        "best_epoch": 53,
-        "best_validation_metric": 0.08963124644127161,
+        "best_epoch": 85,
+        "best_validation_metric": 0.08979362785187309,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05773181924791565,
-          "Recall@20": 0.0888592367860866,
-          "NDCG@10": 0.031334259642557,
-          "NDCG@20": 0.039352454645562564,
+          "Recall@10": 0.05897053026877737,
+          "Recall@20": 0.08996915066567857,
+          "NDCG@10": 0.03245342014954541,
+          "NDCG@20": 0.04044756455649335,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -1994,7 +1998,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -2007,6 +2011,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -2050,19 +2055,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
       "latest_epoch": 85,
       "best_epoch": 65,
       "result": {
         "best_epoch": 65,
-        "best_validation_metric": 0.0880497759612675,
+        "best_validation_metric": 0.0896629729751893,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.05764512586314372,
-          "Recall@20": 0.08774440689997745,
-          "NDCG@10": 0.03143352910808809,
-          "NDCG@20": 0.03920114816477095,
+          "Recall@10": 0.058842245908232754,
+          "Recall@20": 0.08995990946521877,
+          "NDCG@10": 0.031902386863051746,
+          "NDCG@20": 0.039923879963083775,
           "n_users": 35598
         },
         "evaluation_protocol": {
@@ -2096,7 +2101,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -2109,6 +2114,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3070,19 +3076,19 @@
       "variant": "official",
       "seed": 999,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 108,
-      "best_epoch": 88,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 107,
+      "best_epoch": 87,
       "result": {
-        "best_epoch": 88,
-        "best_validation_metric": 0.06342617276427925,
+        "best_epoch": 87,
+        "best_validation_metric": 0.06498844796506462,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.0427222179907076,
-          "Recall@20": 0.06442311761071758,
-          "NDCG@10": 0.022782224510734122,
-          "NDCG@20": 0.028313871754384715,
+          "Recall@10": 0.04333723841683321,
+          "Recall@20": 0.06530750416804192,
+          "NDCG@10": 0.023063378378621047,
+          "NDCG@20": 0.028628838462149465,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3116,7 +3122,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -3129,6 +3135,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3172,19 +3179,19 @@
       "variant": "official",
       "seed": 2024,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 112,
-      "best_epoch": 92,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 117,
+      "best_epoch": 97,
       "result": {
-        "best_epoch": 92,
-        "best_validation_metric": 0.06550977056727686,
+        "best_epoch": 97,
+        "best_validation_metric": 0.06723961374734473,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.042419422893944944,
-          "Recall@20": 0.06451729903630277,
-          "NDCG@10": 0.022703836221332492,
-          "NDCG@20": 0.028328069757155187,
+          "Recall@10": 0.043158487148890076,
+          "Recall@20": 0.06591049500258123,
+          "NDCG@10": 0.022972790424218605,
+          "NDCG@20": 0.028761881965020327,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3218,7 +3225,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -3231,6 +3238,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -3274,19 +3282,19 @@
       "variant": "official",
       "seed": 2025,
       "status": "completed",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official",
-      "latest_epoch": 119,
-      "best_epoch": 99,
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec",
+      "latest_epoch": 150,
+      "best_epoch": 130,
       "result": {
-        "best_epoch": 99,
-        "best_validation_metric": 0.06348414451468758,
+        "best_epoch": 130,
+        "best_validation_metric": 0.06455707527380922,
         "monitor": "Recall@20",
         "test": {
-          "Recall@10": 0.041949543419571605,
-          "Recall@20": 0.06458264571220623,
-          "NDCG@10": 0.02234554439982375,
-          "NDCG@20": 0.028121985106891317,
+          "Recall@10": 0.04290423356993545,
+          "Recall@20": 0.06476713975000213,
+          "NDCG@10": 0.022880250151912106,
+          "NDCG@20": 0.02842599747430956,
           "n_users": 39387
         },
         "evaluation_protocol": {
@@ -3320,7 +3328,7 @@
           }
         },
         "model": {
-          "name": "lgmrec_damps_official",
+          "name": "lgmrec",
           "embedding_dim": 64,
           "ui_layers": 2,
           "modal_layers": 2,
@@ -3333,6 +3341,7 @@
           "temperature": 0.2,
           "contrastive_chunk": 8192,
           "damps_enabled": true,
+          "damps_mode": "official",
           "damps_apc": true,
           "damps_avrf": true,
           "damps_imcf": true,
@@ -4012,24 +4021,24 @@
       "variant": "official",
       "seed": 999,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "elec",
       "variant": "official",
       "seed": 2024,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "elec",
       "variant": "official",
       "seed": 2025,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "elec",
@@ -4672,24 +4681,24 @@
       "variant": "official",
       "seed": 999,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "microlens",
       "variant": "official",
       "seed": 2024,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "microlens",
       "variant": "official",
       "seed": 2025,
       "status": "not_scheduled",
-      "suite_id": "official-adapter-controls-20261102T061905Z",
-      "training_model_name": "lgmrec_damps_official"
+      "suite_id": "comp5331-official-style-20261102T134810Z",
+      "training_model_name": "lgmrec"
     },
     {
       "dataset": "microlens",

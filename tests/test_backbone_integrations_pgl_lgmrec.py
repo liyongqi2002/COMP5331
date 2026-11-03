@@ -1,7 +1,5 @@
 """Both backbones reuse the existing training, checkpoint, and ablation APIs."""
 from copy import deepcopy
-from pathlib import Path
-import hashlib
 import json
 
 import pytest
@@ -247,11 +245,6 @@ def official_config(tiny_config, name):
     return config
 
 
-def test_released_core_is_unchanged():
-    from mmrecsys.nn import damps_released
-    assert hashlib.sha256(Path(damps_released.__file__).read_bytes()).hexdigest() == 'f0183b7bf9fa238f3ffea1af6a86f5fba6d193f6c81a961fc9338e8a1062a9a9'
-
-
 @pytest.mark.parametrize('name',['pgl','lgmrec'])
 def test_official_gradient_paths_and_two_steps(tiny_config, name):
     cfg=official_config(tiny_config,name)
@@ -271,13 +264,16 @@ def test_official_gradient_paths_and_two_steps(tiny_config, name):
         else:assert torch.isfinite(p.grad).all(),n
     if name=='pgl':
         assert set(dead)=={'image_embedding.weight','text_embedding.weight','image_projection.weight','image_projection.bias','text_projection.weight','text_projection.bias'}
-        assert model.damps.psi.grad is not None
+        assert model.damps.phase_residual.grad is not None
     else:
         assert dead and all(n.startswith('damps.') for n in dead)
-        assert model.damps.psi.grad is None
+        assert model.damps.phase_residual.grad is None
         assert not model.image_embedding.weight.requires_grad
-        assert model.image_projection.shape[0]==model.image.shape[1]
-    assert 'damps.avg_R' in model.state_dict()
+        assert model.image_projection.shape[0]==model.image_embedding.weight.shape[1]
+    from mmrecsys.nn.damps import DAMPS
+    assert isinstance(model.damps, DAMPS)
+    assert 'damps.phase_prior' in model.state_dict()
+    assert model.image_embedding.weight.shape[1] == cfg['model']['embedding_dim']
 
 
 @pytest.mark.parametrize('name',['pgl','lgmrec'])
@@ -293,9 +289,13 @@ def test_official_checkpoint_roundtrip(tiny_config,name):
 
 
 @pytest.mark.parametrize("name", ["pgl", "lgmrec"])
-def test_official_mode_rejects_unsupported_components(tiny_config, name):
-    config = official_config(tiny_config, name)
-    config['model']['damps_apc'] = False
-    with pytest.raises(ValueError, match="Official DAMPS requires"):
-        from mmrecsys.config import validate
-        validate(config)
+@pytest.mark.parametrize("component", ["apc", "avrf", "imcf"])
+def test_official_style_supports_shared_component_switches(tiny_config, name, component):
+    cfg = official_config(tiny_config, name)
+    cfg['model']['damps_' + component] = False
+    _, _, _, model, _, _ = assemble(cfg)
+    model.on_epoch_start(1)
+    batch = TrainBatch(torch.tensor([0, 1]), torch.tensor([1, 2]), torch.tensor([[3], [4]]))
+    loss = model.compute_loss(batch).total
+    assert torch.isfinite(loss)
+    loss.backward()

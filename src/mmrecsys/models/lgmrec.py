@@ -10,7 +10,6 @@ from .base import DotProductScorer, LossOutput, Recommender
 from ..data.views import TrainBatch, TrainData
 from ..experiment.artifacts import GraphCache
 from ..nn.damps import DAMPS
-from ..nn.damps_released import DAMPS as ReleasedDAMPS
 from ..nn.graph import interaction_graph
 from ..nn.losses import bpr_loss
 
@@ -39,9 +38,6 @@ class LGMRecConfig:
     def __post_init__(self):
         if self.damps_mode not in ("concat", "official"):
             raise ValueError("model.damps_mode must be concat or official")
-        if self.damps_enabled and self.damps_mode == "official":
-            if not (self.damps_apc and self.damps_avrf and self.damps_imcf) or self.damps_eps != 1e-6:
-                raise ValueError("Official DAMPS requires all components on and eps=1e-6")
         if self.name != "lgmrec":
             raise ValueError("Expected model.name=lgmrec")
         for field in ("embedding_dim", "ui_layers", "modal_layers", "hyper_layers",
@@ -204,7 +200,7 @@ class LGMRec(Recommender):
         return DotProductScorer(users, items)
 
 
-    # Published adapter path; isolated from the default concatenation design.
+    # Official call sites using the shared COMP5331 DAMPS implementation.
     def _init_official(self, config: LGMRecConfig, data: TrainData, cache: GraphCache):
         Recommender.__init__(self)
         self.config = config
@@ -226,21 +222,20 @@ class LGMRec(Recommender):
         self.item_id = nn.Embedding(data.n_items, dim)
         nn.init.xavier_uniform_(self.user_id.weight)
         nn.init.xavier_uniform_(self.item_id.weight)
-        self.damps = ReleasedDAMPS(dim, "cpu", image.clone(), text.clone())
-        # The release stores this tensor as a plain attribute. Register it so
-        # COMP5331 .to(device) and checkpoints preserve the same prior values.
-        prior = self.damps.avg_R
-        del self.damps.avg_R
-        self.damps.register_buffer("avg_R", prior)
+        # Reuse COMP5331's feature-owned DAMPS; its output width is D.
+        self.damps = DAMPS(config.embedding_dim, apc=config.damps_apc,
+                           avrf=config.damps_avrf, imcf=config.damps_imcf,
+                           eps=config.damps_eps, raw_image=image.clone(), raw_text=text.clone())
         with torch.no_grad():
-            calibrated_image, calibrated_text = self.damps(image, text)
+            calibrated_image, calibrated_text = self.damps()
         self.image_embedding = nn.Embedding.from_pretrained(calibrated_image.clone(), freeze=True)
         self.text_embedding = nn.Embedding.from_pretrained(calibrated_text.clone(), freeze=True)
-        # Native parameter shapes and initialization order from the release.
-        self.image_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(image.shape[1], dim)))
-        self.image_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(image.shape[1], config.hyperedges)))
-        self.text_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(text.shape[1], dim)))
-        self.text_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(text.shape[1], config.hyperedges)))
+        # Shared DAMPS returns D-wide features: adapt the downstream input
+        # shapes while retaining the source local/global branch call sites.
+        self.image_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(calibrated_image.shape[1], dim)))
+        self.image_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(calibrated_image.shape[1], config.hyperedges)))
+        self.text_projection = nn.Parameter(nn.init.xavier_uniform_(torch.empty(calibrated_text.shape[1], dim)))
+        self.text_attributes = nn.Parameter(nn.init.xavier_uniform_(torch.empty(calibrated_text.shape[1], config.hyperedges)))
 
     def _encode_official(self):
         collaborative = self._collaborative()

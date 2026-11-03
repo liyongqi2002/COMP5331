@@ -138,7 +138,7 @@ python -m mmrecsys.cli evaluate --run runs/<run_id> --split test
 ## PGL 与 LGMRec
 
 两个模型各用一个实现文件、一个配置文件。`model.damps_enabled=false` 为基线，
-`true` 默认使用四路拼接版；`model.damps_mode=official` 切换为发布仓库实际接入路径。
+`true` 默认使用四路拼接版；`model.damps_mode=official` 切换为官方接入流程（使用COMP5331算子）。
 复用原有训练器和评估器；官方LGMRec接入仅初始化校准，DAMPS不随推荐损失更新。
 
 ```bash
@@ -148,18 +148,20 @@ python -m mmrecsys.cli train --model lgmrec --dataset baby
 python -m mmrecsys.cli train --model lgmrec --dataset baby --set model.damps_enabled=true
 ```
 
-官方接入对照（每路64维，PGL最终128维，LGMRec最终64维）：
+官方接入流程＋COMP5331算子（每路64维，PGL最终128维，LGMRec最终64维）：
 
 ```bash
 python -m mmrecsys.cli train --model pgl --dataset baby --set model.damps_enabled=true --set model.damps_mode=official
 python -m mmrecsys.cli train --model lgmrec --dataset baby --set model.damps_enabled=true --set model.damps_mode=official
 ```
 
-`damps_mode=concat` 保留主方式；`official` 使用未改动的发布算子 `nn/damps_released.py`。
-PGL保留初始化校准建图、每次前向调用DAMPS、外部模态投影无有效梯度的路径；
-LGMRec保留仅初始化校准后冻结特征的路径。官方算子默认组件全部开启；不支持用该模式做组件开关实验。
-初始化在CPU执行，相位先验注册为buffer以支持设备迁移/保存，训练和评估仍为COMP5331；
-这是官方接入方式对照，不是完整作者框架的逐位复现。来源与校验见 [官方DAMPS算子说明](docs/damps-released.md)。
+`damps_mode=concat` 保留四路拼接主方式；`official` 参考官方接入流程，但仍使用
+COMP5331原有 `nn/damps.py`，不引入另一份DAMPS算子。
+PGL在初始化校准后建物品图，每次前向继续调用DAMPS；外部模态投影仍无有效梯度。
+LGMRec仅初始化校准，随后冻结模态特征，训练时不再调用DAMPS。
+COMP5331的DAMPS固定输出D维，因此初始化特征也为D维；官方发布算子此前可重建到
+原始特征宽度。两者建图和LGMRec后续参数形状可能不同，不能混用实验成绩或checkpoint。
+接入流程、梯度路径与结果见 [PGL结果说明](docs/results/pgl/README.md) 和 [LGMRec结果说明](docs/results/lgmrec/README.md)。
 
 通过 `--set data.root=/absolute/path/to/data` 指定数据目录；支持 baby、sports、
 clothing、elec、microlens。配置为当前固定参数，不代表逐数据集搜索最优参数。
